@@ -1,0 +1,6 @@
+{
+    "env": {
+        "BerkePass": "Bc25120286950.",
+        "JWT_Key": "secret"
+    }
+}
