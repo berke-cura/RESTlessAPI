@@ -3,8 +3,6 @@ const Product = require('../models/product');
 const multer = require('multer');
 
 
-
-
 exports.product_get_all = (req, res, next) => {
     Product.find()
     .select('name price _id productImage')
@@ -122,7 +120,7 @@ exports.product_update_product = (req, res, next) => {
 };
 
 exports.product_delete_product = (req, res, next) => {
-    const id = req.params.productId;
+    const id = req.params.productId
     Product.remove({_id: id})
     .exec()
     .then(result => {
