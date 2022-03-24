@@ -1,6 +1,8 @@
-const Product = require('../models/product');
-
 const mongoose = require('mongoose');
+const Product = require('../models/product');
+const multer = require('multer');
+
+
 
 
 exports.product_get_all = (req, res, next) => {
@@ -39,7 +41,7 @@ exports.product_get_all = (req, res, next) => {
     });
 };
 
-exports.product_post_product = upload.single('productImage'), (req, res, next) => {
+exports.product_post_product = (req, res, next) => {
     console.log(req.file);
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
