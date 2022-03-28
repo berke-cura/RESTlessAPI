@@ -35,7 +35,7 @@ exports.order_get_all = (req, res, next) => {
 
 exports.order_create_order = (req, res, next) => {
     Product.findById(req.body.productId)
-        .then(product => {
+    .then(product => {
             if (!product) {
                 return res.status(404).json({
                     message: "Product not found"
@@ -51,12 +51,14 @@ exports.order_create_order = (req, res, next) => {
         })
         .then(result => {
             console.log(result);
+            const date = new Date().getTime();
             res.status(200).json({
                 message: 'Orders stored',
                 createdOrder: {
                     _id: result._id,
                     product: result.product,
-                    quantity: result.quantity
+                    quantity: result.quantity,
+                    orderDate: date
                 },
                 request: {
                     type: 'GET',

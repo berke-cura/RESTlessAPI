@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Product = require('../models/product');
 const multer = require('multer');
+const fs = require('fs');
 
 
 exports.product_get_all = (req, res, next) => {
@@ -41,15 +42,23 @@ exports.product_get_all = (req, res, next) => {
 
 exports.product_post_product = (req, res, next) => {
     console.log(req.file);
+    console.log("2222222");
+
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         price: req.body.price,
         productImage: req.file.path
     });
+    console.log("2222222");
+
+    console.log(product);
+    console.log("2222222");
+
     product
         .save()
         .then(result => {
+            console.log(result);
             res.status(201).json({
                 message: 'Product created succesfully',
                 createdProduct: {
@@ -75,6 +84,7 @@ exports.product_post_product = (req, res, next) => {
 exports.product_get_product = (req, res, next) => {
     const id = req.params.productId;
     Product.findById(id)
+    console.log(Product)
     .select('name price _id productImage')
     .exec()
     .then(doc => {
@@ -121,16 +131,26 @@ exports.product_update_product = (req, res, next) => {
 
 exports.product_delete_product = (req, res, next) => {
     const id = req.params.productId
-    Product.remove({_id: id})
-    .exec()
-    .then(result => {
+    Product.findById(id)
+    .then(doc => {
+       if(!doc) {
+            res.status(404).json({ status: 'fail', message : 'Product cannot find'})
+       }
+       const imagePath = doc.productImage
+       return fs.unlink(imagePath, (err) => {
+           if(err) {
+                res.status(500).json({ status: 'fail', message: 'Product Image Cannot Delete On Server', error: err})
+           }
+           console.log("File deleted on server")
+       })
+    })
+    .then(() => {
+       return Product.remove({_id: id})
+    })
+    .then( () => {
         res.status(200).json({
             message: 'Product deleted',
-            request: {
-                type: 'POST',
-                url: 'http:localhost:3000/products/',
-                body: {name: 'String', price: 'Number'}
-            }
+            product_id : id
         });
     })
     .catch(err => {
